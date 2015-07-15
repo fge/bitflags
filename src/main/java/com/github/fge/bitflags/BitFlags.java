@@ -1,18 +1,23 @@
 package com.github.fge.bitflags;
 
+import com.github.fge.bitflags.internal.VisibleForTesting;
+
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public final class BitFlags
 {
+    @VisibleForTesting
+    static final String ILLEGAL_SIZE
+        = "will not create an instance of size 0 or less";
+
     private final int nrBits;
     private final byte[] bytes;
 
     public static BitFlags ofSize(final int nrBits)
     {
         if (nrBits <= 0)
-            throw new IllegalArgumentException("will not create an instance"
-                + " of size 0 or less");
+            throw new IllegalArgumentException(ILLEGAL_SIZE);
         return new BitFlags(nrBits);
     }
 
