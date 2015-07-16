@@ -33,10 +33,25 @@ public final class BitFlags
         if (bitOffset >= nrBits)
             throw new IndexOutOfBoundsException();
         final int byteIndex = bitOffset / 8;
-        final byte b = bytes[byteIndex];
+        final byte targetByte = bytes[byteIndex];
         @SuppressWarnings("UnnecessaryParentheses")
         final int value = 1 << (bitOffset % 8);
-        return (b & value) == value;
+        return (targetByte & value) == value;
+    }
+
+    public BitFlags set(final int bitOffset, final boolean b)
+    {
+        if (bitOffset >= nrBits)
+            throw new IndexOutOfBoundsException();
+        final int byteIndex = bitOffset / 8;
+        int targetByte = bytes[byteIndex];
+        @SuppressWarnings("UnnecessaryParentheses")
+        final int mask = 1 << (bitOffset % 8);
+        targetByte = b
+            ? targetByte | mask
+            : targetByte & ~mask;
+        bytes[byteIndex] = (byte) targetByte;
+        return this;
     }
 
     @Override
@@ -44,7 +59,7 @@ public final class BitFlags
     {
         final char[] chars = new char[bytes.length * 8];
         Arrays.fill(chars, 'x');
-        IntStream.of(0, nrBits)
+        IntStream.range(0, nrBits)
             .forEach(index -> chars[index] = get(index) ? '1' : '0');
         return new String(chars);
     }
